@@ -1,0 +1,39 @@
+name: Live OpenAlex smoke test
+
+# Runs against the real OpenAlex service, unlike the mocked unit tests.
+# Can be launched manually from Actions > Live OpenAlex smoke test > Run workflow.
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - "scripts/smoke_openalex.py"
+      - ".github/workflows/openalex-smoke.yml"
+      - "src/citation_chain/**"
+
+jobs:
+  smoke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: read
+    env:
+      # Optional: add a free key as a GitHub Actions repository secret.
+      OPENALEX_API_KEY: ${{ secrets.OPENALEX_API_KEY }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install package
+        run: python -m pip install -e .
+      - name: Call OpenAlex and verify SQLite citation storage
+        run: python scripts/smoke_openalex.py
+      - name: Attach bibliographic results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: openalex-smoke-results
+          path: |
+            smoke-output/report.json
+            smoke-output/*.csv
+          if-no-files-found: ignore
