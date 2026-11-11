@@ -2,6 +2,15 @@
 
 A small, **persistent** citation-chaining system for scholarly literature, with an optional Model Context Protocol (MCP) interface. Designed as a usable first version rather than an automatic literature-review writer.
 
+
+## Live test and connection guide (November 2026)
+
+A bounded integration test is available through **Actions → Live OpenAlex smoke test → Run workflow**. It queries the real OpenAlex service for Arnold (2022), records a small bidirectional citation sample, and publishes CSV results as a workflow artifact. Mock-only unit tests remain separate.
+
+**Step-by-step instructions:** [Run, test, and connect Citation Chaining](docs/RUN_AND_CONNECT.md).
+
+A remote MCP endpoint is supported in code via `MCP_TRANSPORT=streamable-http` with `MCP_HOST` and `PORT`. This is **not** a production deployment: add authenticated HTTPS access and durable SQLite storage before exposure. Custom full read/write MCP connections require an eligible ChatGPT workspace; a personal Plus account should use the CLI/Codespaces workflow for now.
+
 ## Features
 
 - Bidirectional snowballing through **OpenAlex**: `referenced_works` and works that `cite` a work.
@@ -79,7 +88,7 @@ python -m citation_chain.mcp_server
 
 Available MCP tools: `lookup_paper`, `add_seed`, `expand_citation_chain`, `library_stats`, `search_library`, `record_unmatched_reference`, and `export_citation_library`.
 
-To deploy as a remote MCP server, set `MCP_TRANSPORT=streamable-http`. **Do not expose an unauthenticated write-capable service on the public Internet.** Use an authenticated HTTPS proxy, a private network or equivalent access control before connecting it to a remote AI client. This project contains no built-in OAuth, user management or remote database hosting. An actual ChatGPT plugin connection may require a publicly reachable, secured server and suitable account/workspace permissions. See https://py.sdk.modelcontextprotocol.io/ for the Python MCP SDK v2.
+To run a remote HTTP MCP endpoint, set `MCP_TRANSPORT=streamable-http` and configure `MCP_HOST` / `PORT`. **Do not expose an unauthenticated write-capable service on the public Internet.** Use an authenticated HTTPS proxy, a private network or equivalent access control before connecting it to a remote AI client. This project contains no built-in OAuth, user management or remote database hosting. An actual ChatGPT plugin connection may require a publicly reachable, secured server and suitable account/workspace permissions. See https://py.sdk.modelcontextprotocol.io/ for the Python MCP SDK v2.
 
 ## Reliability, scope, and limitations
 
